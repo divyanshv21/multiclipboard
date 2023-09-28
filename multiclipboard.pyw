@@ -1,21 +1,43 @@
-#! python3
-#        mcb.pyw - Saves and loads pieces of text to the clipboard.
-#        Usage: py.exe mcb.pyw save <keyword> - Saves clipboard to keyword.
-#        py.exe mcb.pyw <keyword> - Loads keyword to clipboard.
-#        py.exe mcb.pyw list - Loads all keywords to clipboard.
+import shelve
+import pyperclip
+import sys
 
-import shelve, pyperclip, sys 
+def save_to_clipboard(keyword):
+    mcbShelf[keyword] = pyperclip.paste()
 
-mcbShelf = shelve.open('mcb')
-# Save clipboard content.
-if len(sys.argv) == 3 and sys.argv[1].lower() == 'save': 
-    mcbShelf[sys.argv[2]] = pyperclip.paste()
-elif len(sys.argv) == 2:
-    # List keywords and load content.
-    if sys.argv[1].lower() == 'list':
-        pyperclip.copy(str(list(mcbShelf.keys())))
-    elif sys.argv[1] in mcbShelf:
-        pyperclip.copy(mcbShelf[sys.argv[1]])
+def load_from_clipboard(keyword):
+    if keyword in mcbShelf:
+        pyperclip.copy(mcbShelf[keyword])
+    else:
+        print(f"No entry found for '{keyword}'.")
 
-   
-mcbShelf.close()
+def delete_keyword(keyword):
+    if keyword in mcbShelf:
+        del mcbShelf[keyword]
+        print(f"Deleted '{keyword}' entry.")
+    else:
+        print(f"No entry found for '{keyword}'.")
+
+def delete_all_keywords():
+    mcbShelf.clear()
+    print("All entries deleted.")
+
+if len(sys.argv) == 3:
+    mcbShelf = shelve.open('mcb')
+    command = sys.argv[1].lower()
+    keyword = sys.argv[2]
+
+    if command == 'save':
+        save_to_clipboard(keyword)
+    elif command == 'load':
+        load_from_clipboard(keyword)
+    elif command == 'delete':
+        delete_keyword(keyword)
+    else:
+        print("Invalid command. Use 'save', 'load', 'delete', or 'deleteall'.")
+else:
+    print("Usage: python mcb.pyw <command> <keyword>")
+    print("Commands: save, load, delete, deleteall")
+
+if 'mcbShelf' in locals():
+    mcbShelf.close()
