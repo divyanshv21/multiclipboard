@@ -1,4 +1,4 @@
-# multiclipboard
+# Clipboard manager with command line functionality
 
 Let's say you have the unenviable chore of filling out a bunch of forms in some software or on a website. You can avoid repeatedly typing the same thing by using the clipboard. However, the clipboard can only hold one item at a time. Copying and pasting from multiple sources requires repeatedly highlighting and copying the same little subset of text.
 
